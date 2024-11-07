@@ -19,10 +19,15 @@ variable "project_id" {
 
 variable "region" {
   description = "The region to host the cluster in"
+  default = "us-central1"
 }
 
 variable "cluster_prefix" {
   description = "The prefix for all cluster resources"
   default     = "elasticsearch"
+}
+
+variable "google_credentials" {
+  description = "Google Cloud credentials JSON"
 }
 
