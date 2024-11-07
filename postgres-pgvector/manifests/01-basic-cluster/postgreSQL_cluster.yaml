@@ -22,7 +22,7 @@ spec:
   description: "Standard GKE PostgreSQL cluster"
   imageName: ghcr.io/cloudnative-pg/postgresql:16.2
   enableSuperuserAccess: true
-  instances: 3
+  instances: 1
   startDelay: 300
   primaryUpdateStrategy: unsupervised
   postgresql:
@@ -35,14 +35,14 @@ spec:
       database: app
   storage:
     storageClass: premium-rwo
-    size: 2Gi
+    size: 1Gi
   resources:
     requests:
       memory: "1Gi"
-      cpu: "1000m"
+      cpu: "500m"
     limits:
       memory: "1Gi"
-      cpu: "1000m"
+      cpu: "500m"
   affinity:
     enablePodAntiAffinity: true
     tolerations:
