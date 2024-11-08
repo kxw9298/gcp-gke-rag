@@ -1,10 +1,10 @@
-# Copyright 2023 Google LLC
+# Copyright 2024 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
 #
-#      http://www.apache.org/licenses/LICENSE-2.0
+#     https://www.apache.org/licenses/LICENSE-2.0
 #
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,26 +13,18 @@
 # limitations under the License.
 
 variable "project_id" {
-  description = "The project ID to host the cluster in"
-  default     = ""
+  description = "The project ID to host the bucket in"
 }
 
 variable "region" {
-  description = "The region to host the cluster in"
-  default = "us-central1"
+  description = "The region to host the bucket in"
 }
 
 variable "cluster_prefix" {
-  description = "The prefix for all cluster resources"
-  default     = "postgresql"
-}
-
-
-variable "google_credentials" {
-  description = "Google Cloud credentials JSON"
+  description = "The prefix of existing GKE cluster"
 }
 
 variable "db_namespace" {
   description = "The namespace of the vector database"
-  default = "pg-ns"
 }
+
