@@ -37,3 +37,38 @@ output "kubectl_connection_command" {
   description = "Connection command"
 }
 # [END gke_databases_postgresql_cloudnativepg_autopilot_private_regional_cluster]
+
+# Create an Artifact Registry repository
+resource "google_artifact_registry_repository" "vector_db_images_repo" {
+  project              = var.project_id
+  location             = var.region
+  repository_id        = "${var.cluster_prefix}-images"
+  format               = "DOCKER"
+  description          = "Vector database images repository"
+}
+
+# Get project details, including the project number
+data "google_project" "project" {
+  project_id = var.project_id
+}
+
+# Grant "roles/storage.objectAdmin" role to the default Compute Engine service account
+resource "google_project_iam_member" "storage_object_admin" {
+  project = var.project_id
+  role    = "roles/storage.objectAdmin"
+  member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+# Grant "roles/artifactregistry.admin" role to the default Compute Engine service account
+resource "google_project_iam_member" "artifact_registry_admin" {
+  project = var.project_id
+  role    = "roles/artifactregistry.admin"
+  member  = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+# Grant "roles/artifactregistry.serviceAgent" role to the GKE cluster's service account
+resource "google_project_iam_member" "artifact_registry_service_agent" {
+  project = var.project_id
+  role    = "roles/artifactregistry.serviceAgent"
+  member  = "serviceAccount:${module.postgresql_cluster.service_account}"
+}
