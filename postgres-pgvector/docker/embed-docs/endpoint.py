@@ -44,27 +44,49 @@ logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 config.load_incluster_config()
 # [START gke_databases_postgres_pgvector_docker_embed_endpoint_job]
 def kube_create_job_object(name, container_image, bucket_name, f_name, namespace="pg-ns", container_name="jobcontainer", env_vars={}):
-
     body = client.V1Job(api_version="batch/v1", kind="Job")
     body.metadata = client.V1ObjectMeta(namespace=namespace, name=name)
     body.status = client.V1JobStatus()
-    
+
     template = client.V1PodTemplate()
     template.template = client.V1PodTemplateSpec()
+
     env_list = [
         client.V1EnvVar(name="POSTGRES_HOST", value=os.getenv("POSTGRES_HOST")),
-        client.V1EnvVar(name="DATABASE_NAME", value="app"), 
-        client.V1EnvVar(name="COLLECTION_NAME", value="training-docs"), 
-        client.V1EnvVar(name="FILE_NAME", value=f_name), 
+        client.V1EnvVar(name="DATABASE_NAME", value="app"),
+        client.V1EnvVar(name="COLLECTION_NAME", value="training-docs"),
+        client.V1EnvVar(name="FILE_NAME", value=f_name),
         client.V1EnvVar(name="BUCKET_NAME", value=bucket_name),
-        client.V1EnvVar(name="PASSWORD", value_from=client.V1EnvVarSource(secret_key_ref=client.V1SecretKeySelector(key="password", name="gke-pg-cluster-app"))), 
-        client.V1EnvVar(name="USERNAME", value_from=client.V1EnvVarSource(secret_key_ref=client.V1SecretKeySelector(key="username", name="gke-pg-cluster-app"))), 
+        client.V1EnvVar(name="PASSWORD", value_from=client.V1EnvVarSource(secret_key_ref=client.V1SecretKeySelector(key="password", name="gke-pg-cluster-app"))),
+        client.V1EnvVar(name="USERNAME", value_from=client.V1EnvVarSource(secret_key_ref=client.V1SecretKeySelector(key="username", name="gke-pg-cluster-app"))),
     ]
-    
-    container = client.V1Container(name=container_name, image=container_image, image_pull_policy='Always', env=env_list)
-    template.template.spec = client.V1PodSpec(containers=[container], restart_policy='Never', service_account='embed-docs-sa')
 
-    body.spec = client.V1JobSpec(backoff_limit=3, ttl_seconds_after_finished=60, template=template.template)
+    # Define CPU and memory requests and limits
+    resources = client.V1ResourceRequirements(
+        requests={"cpu": "200m", "memory": "128Mi"},
+        limits={"cpu": "300m", "memory": "256Mi"}
+    )
+
+    # Set resources in the container
+    container = client.V1Container(
+        name=container_name,
+        image=container_image,
+        image_pull_policy='Always',
+        env=env_list,
+        resources=resources  # Add the resource requirements here
+    )
+
+    template.template.spec = client.V1PodSpec(
+        containers=[container],
+        restart_policy='Never',
+        service_account='embed-docs-sa'
+    )
+
+    body.spec = client.V1JobSpec(
+        backoff_limit=3,
+        ttl_seconds_after_finished=60,
+        template=template.template
+    )
     return body
 # [END gke_databases_postgres_pgvector_docker_embed_endpoint_job]
 def kube_test_credentials():
