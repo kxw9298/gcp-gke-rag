@@ -59,3 +59,34 @@ sed "s/<PROJECT_ID>/$PROJECT_ID/;s/<CLUSTER_PREFIX>/$KUBERNETES_CLUSTER_PREFIX/"
 sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/03-rag/chatbot.yaml | kubectl -n pg-ns apply -f -
 sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/03-rag/docs-embedder.yaml | kubectl -n pg-ns apply -f -
 ```
+
+## 4. Load documents and run chatbot queries
+### Enable Eventarc triggers for GKE
+```
+
+gcloud eventarc gke-destinations init
+
+```
+
+### Deploy the Cloud Storage bucket and create an Eventarc trigger using Terraform
+```
+terraform -chdir=terraform/cloud-storage init
+terraform -chdir=terraform/cloud-storage apply \
+```
+
+### Upload the example carbon-free-energy.pdf document to the bucket
+```
+gsutil cp documents/carbon-free-energy.pdf gs://${PROJECT_ID}-${KUBERNETES_CLUSTER_PREFIX}-training-docs
+```
+
+### Verify the document embedder job completed successfully
+```
+kubectl get job -n ${DB_NAMESPACE}
+```
+
+## 5. Access the application
+### Get the external IP address of the load balancer
+```
+export EXTERNAL_IP=$(kubectl -n ${DB_NAMESPACE} get svc chatbot --output jsonpath='{.status.loadBalancer.ingress[0].ip}')
+echo http://$EXTERNAL_IP:80
+```
