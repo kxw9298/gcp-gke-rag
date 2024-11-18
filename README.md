@@ -1,4 +1,12 @@
 ## 1. Create your cluster infrastructure
+### enable below apis
+```
+
+gcloud services enable cloudresourcemanager.googleapis.com compute.googleapis.com container.googleapis.com iamcredentials.googleapis.com
+
+gcloud services enable aiplatform.googleapis.com cloudbuild.googleapis.com eventarc.googleapis.com artifactregistry.googleapis.com
+```
+
 ### Deploy cloud resources under terraform/gke-autopilot
 ```
 terraform init
