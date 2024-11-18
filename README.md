@@ -15,30 +15,34 @@ gcloud container clusters get-credentials \
     ${KUBERNETES_CLUSTER_PREFIX}-cluster --region ${REGION} --project ${PROJECT_ID}
 
 ```
-###
+### Add the CloudNativePG operator Helm Chart repository
 ```
-# Add the CloudNativePG operator Helm Chart repository
 helm repo add cnpg https://cloudnative-pg.github.io/charts
-
-# Deploy the CloudNativePG operator using the Helm command-line tool
-
+```
+### Deploy the CloudNativePG operator using the Helm command-line tool
+```
 helm upgrade --install cnpg \
     --namespace cnpg-system \
     --create-namespace \
     cnpg/cloudnative-pg
+```
 
-# Create a namespace pg-ns for the database:
+### Create a namespace pg-ns for the database:
+```
 kubectl create ns pg-ns
-
+```
 # Apply the manifest to deploy PostgreSQL cluster. The cluster manifest enables the pgvector extension.
 
+```
 cd kubernetes
 kubectl apply -n pg-ns -f manifests/01-basic-cluster/postgreSQL_cluster.yaml
-
-# Check the status of the cluster. Wait for the output to show a status of Cluster in healthy state.
-kubectl get cluster -n pg-ns --watch
-
 ```
+
+### Check the status of the cluster. Wait for the output to show a status of Cluster in healthy state.
+```
+kubectl get cluster -n pg-ns --watch
+```
+
 ## 3. Deploy k8s services 
 ### Build Docker images for the embed-docs and chatbot Services
 ```
