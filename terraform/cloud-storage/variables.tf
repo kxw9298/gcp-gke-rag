@@ -18,6 +18,7 @@ variable "project_id" {
 
 variable "region" {
   description = "The region to host the bucket in"
+  default = "us-central1"
 }
 
 variable "cluster_prefix" {
