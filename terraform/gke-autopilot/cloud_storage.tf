@@ -19,6 +19,7 @@ module "cloud_storage" {
   region         = var.region
   cluster_prefix = var.cluster_prefix
   db_namespace   = var.db_namespace
+  depends_on = [module.postgresql_cluster]
 }
 
 output "bucket_name" {
