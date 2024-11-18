@@ -31,7 +31,7 @@ helm upgrade --install cnpg \
 ```
 kubectl create ns pg-ns
 ```
-# Apply the manifest to deploy PostgreSQL cluster. The cluster manifest enables the pgvector extension.
+### Apply the manifest to deploy PostgreSQL cluster. The cluster manifest enables the pgvector extension.
 
 ```
 cd kubernetes
