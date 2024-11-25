@@ -43,7 +43,7 @@ kubectl create ns pg-ns
 
 ```
 cd kubernetes
-kubectl apply -n pg-ns -f manifests/01-basic-cluster/postgreSQL_cluster.yaml
+kubectl apply -n pg-ns -f manifests/pg-cluster/postgreSQL_cluster.yaml
 ```
 
 ### Check the status of the cluster. Wait for the output to show a status of Cluster in healthy state.
@@ -63,13 +63,13 @@ gcloud builds submit docker/embed-docs --region=${REGION} \
 
 ### Deploy a Kubernetes Service Account with permissions to run Kubernetes Jobs
 ```
-sed "s/<PROJECT_ID>/$PROJECT_ID/;s/<CLUSTER_PREFIX>/$KUBERNETES_CLUSTER_PREFIX/" manifests/03-rag/service-account.yaml | kubectl -n pg-ns apply -f -
+sed "s/<PROJECT_ID>/$PROJECT_ID/;s/<CLUSTER_PREFIX>/$KUBERNETES_CLUSTER_PREFIX/" manifests/rag/service-account.yaml | kubectl -n pg-ns apply -f -
 ```
 
 ### Deploy a Kubernetes Deployment for the embed-docs and chatbot Services
 ```
-sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/03-rag/chatbot.yaml | kubectl -n pg-ns apply -f -
-sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/03-rag/docs-embedder.yaml | kubectl -n pg-ns apply -f -
+sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/rag/chatbot.yaml | kubectl -n pg-ns apply -f -
+sed "s|<DOCKER_REPO>|$DOCKER_REPO|" manifests/rag/docs-embedder.yaml | kubectl -n pg-ns apply -f -
 ```
 
 ## 4. Load documents and run chatbot queries
